@@ -1,21 +1,46 @@
 ---
 import { profile } from "../data/portfolio";
+import { siGithub } from "simple-icons";
+
+// Envelope glyph (not a brand mark, so drawn inline as a fill path).
+const MAIL =
+  "M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z";
+// LinkedIn mark (Simple Icons dropped it over trademark, so inlined).
+const LINKEDIN =
+  "M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 110-4.13 2.06 2.06 0 010 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.8 0 0 .78 0 1.75v20.5C0 23.22.8 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.75V1.75C24 .78 23.2 0 22.22 0z";
 
 const links = [
-  { label: profile.email, url: `mailto:${profile.email}`, external: false },
-  { ...profile.linkedin, external: true },
-  { ...profile.github, external: true },
+  {
+    label: profile.email,
+    url: `mailto:${profile.email}`,
+    external: false,
+    icon: MAIL,
+  },
+  {
+    label: profile.linkedin.label,
+    url: profile.linkedin.url,
+    external: true,
+    icon: LINKEDIN,
+  },
+  {
+    label: profile.github.label,
+    url: profile.github.url,
+    external: true,
+    icon: siGithub.path,
+  },
 ];
 const year = 2026;
 ---
 
-<footer class="section" id="contact">
+<footer class="section" id="contact" data-reveal>
   <div class="wrap">
     <p class="eyebrow">Get in touch</p>
 
     <h2 class="display headline">
       Open to full-stack roles<br />where I can <em>own the build</em>.
     </h2>
+
+    <p class="availability mono">Available now · Bangkok or remote</p>
 
     <a class="resume" href={profile.resumeUrl} download>
       Download résumé
@@ -27,13 +52,18 @@ const year = 2026;
         links.map((l) => (
           <li>
             <a
-              class="link"
+              class="link social"
               href={l.url}
               target={l.external ? "_blank" : undefined}
               rel={l.external ? "noopener noreferrer" : undefined}
             >
-              {l.label}
-              {l.external && <span aria-hidden="true"> ↗</span>}
+              <svg class="contact-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d={l.icon} />
+              </svg>
+              <span class="social-label">
+                {l.label}
+                {l.external && <span aria-hidden="true"> ↗</span>}
+              </span>
             </a>
           </li>
         ))
@@ -85,6 +115,13 @@ const year = 2026;
     transform: translateY(2px);
   }
 
+  .availability {
+    margin: 1.25rem 0 0;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+  }
+
   .links {
     display: flex;
     flex-wrap: wrap;
@@ -92,6 +129,25 @@ const year = 2026;
     list-style: none;
     margin: clamp(2.5rem, 6vw, 3.5rem) 0 0;
     padding: 0;
+  }
+  /* social link: icon sits outside the underline, label carries it */
+  .social {
+    display: inline-flex;
+    align-items: center;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .contact-icon {
+    width: 0.95em;
+    height: 0.95em;
+    fill: currentColor;
+    opacity: 0.8;
+    margin-right: 0.5rem;
+    flex: none;
+  }
+  .social-label {
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 1px;
   }
 
   .baseline {
