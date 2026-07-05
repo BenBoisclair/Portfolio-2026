@@ -267,6 +267,9 @@ const THUMB_H = 360; // intrinsic height of the thumb files
     const thumbs = Array.from(root.querySelectorAll<HTMLButtonElement>(".thumb"));
     const lb = root.querySelector<HTMLElement>(".lightbox");
     if (!lb || thumbs.length === 0) return;
+    // Move the overlay to <body> so no transformed ancestor (e.g. the
+    // scroll-reveal cards) traps its position:fixed inside the card.
+    document.body.appendChild(lb);
     const img = lb.querySelector<HTMLImageElement>(".lb-img")!;
     const cap = lb.querySelector<HTMLElement>(".lb-caption")!;
     const closeBtn = lb.querySelector<HTMLButtonElement>(".lb-close")!;
