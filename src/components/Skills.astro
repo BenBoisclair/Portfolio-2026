@@ -1,0 +1,69 @@
+---
+import { skills, spoken } from "../data/portfolio";
+---
+
+<section class="section" id="skills">
+  <div class="wrap">
+    <p class="eyebrow">Stack</p>
+
+    <dl class="grid">
+      {
+        skills.map((group) => (
+          <div class="group">
+            <dt class="label mono">{group.label}</dt>
+            <dd class="items">{group.items.join(", ")}</dd>
+          </div>
+        ))
+      }
+      <div class="group">
+        <dt class="label mono">Languages spoken</dt>
+        <dd class="items">{spoken}</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<style>
+  .section {
+    padding-bottom: var(--section-gap);
+  }
+
+  .grid {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .group {
+    display: grid;
+    grid-template-columns: 12rem minmax(0, 1fr);
+    gap: clamp(1rem, 4vw, 3rem);
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--line);
+    align-items: baseline;
+  }
+  .group:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .label {
+    margin: 0;
+    font-size: 0.74rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .items {
+    margin: 0;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 560px) {
+    .group {
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+    }
+  }
+</style>

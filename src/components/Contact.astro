@@ -1,0 +1,117 @@
+---
+import { profile } from "../data/portfolio";
+
+const links = [
+  { label: profile.email, url: `mailto:${profile.email}`, external: false },
+  { ...profile.linkedin, external: true },
+  { ...profile.github, external: true },
+];
+const year = 2026;
+---
+
+<footer class="section" id="contact">
+  <div class="wrap">
+    <p class="eyebrow">Get in touch</p>
+
+    <h2 class="display headline">
+      Open to full-stack roles<br />where I can <em>own the build</em>.
+    </h2>
+
+    <a class="resume" href={profile.resumeUrl} download>
+      Download résumé
+      <span class="arrow" aria-hidden="true">↓</span>
+    </a>
+
+    <ul class="links">
+      {
+        links.map((l) => (
+          <li>
+            <a
+              class="link"
+              href={l.url}
+              target={l.external ? "_blank" : undefined}
+              rel={l.external ? "noopener noreferrer" : undefined}
+            >
+              {l.label}
+              {l.external && <span aria-hidden="true"> ↗</span>}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="baseline mono">
+      <span>{profile.name}</span>
+      <span>© {year} · {profile.location}</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .section {
+    padding-bottom: clamp(3rem, 8vw, 5rem);
+  }
+
+  .headline {
+    font-size: clamp(2.25rem, 6vw, 4rem);
+    max-width: 18ch;
+  }
+
+  .resume {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: clamp(2rem, 5vw, 2.75rem);
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    color: var(--paper);
+    background: var(--ink);
+    padding: 0.85rem 1.4rem;
+    border: 1px solid var(--ink);
+    transition:
+      background 0.18s ease,
+      color 0.18s ease;
+  }
+  .resume:hover {
+    background: transparent;
+    color: var(--ink);
+  }
+  .resume .arrow {
+    transition: transform 0.18s ease;
+  }
+  .resume:hover .arrow {
+    transform: translateY(2px);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem 2rem;
+    list-style: none;
+    margin: clamp(2.5rem, 6vw, 3.5rem) 0 0;
+    padding: 0;
+  }
+
+  .baseline {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin-top: clamp(3.5rem, 9vw, 6rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  @media (max-width: 420px) {
+    .baseline {
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+  }
+</style>

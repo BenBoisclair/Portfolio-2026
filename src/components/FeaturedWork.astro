@@ -1,0 +1,23 @@
+---
+import { featured } from "../data/portfolio";
+import ProjectItem from "./ProjectItem.astro";
+---
+
+<section class="section" id="work">
+  <div class="wrap">
+    <p class="eyebrow">Selected work</p>
+    <div class="list">
+      {featured.map((project) => <ProjectItem project={project} />)}
+    </div>
+  </div>
+</section>
+
+<style>
+  .section {
+    padding-bottom: var(--section-gap);
+  }
+  /* Close the list with a bottom rule so the last row is bounded like the rest */
+  .list {
+    border-bottom: 1px solid var(--line);
+  }
+</style>

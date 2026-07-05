@@ -1,0 +1,147 @@
+---
+import { profile, stats } from "../data/portfolio";
+---
+
+<header class="hero">
+  <div class="wrap">
+    <div class="topline mono">
+      <span class="name">{profile.name}</span>
+      <span class="loc">{profile.location}</span>
+    </div>
+
+    <h1 class="display tagline" set:html={profile.tagline} />
+
+    <p class="summary">{profile.summary}</p>
+
+    <div class="actions">
+      <a class="resume" href={profile.resumeUrl} download>
+        Download résumé
+        <span class="arrow" aria-hidden="true">↓</span>
+      </a>
+      <a class="mailto mono" href={`mailto:${profile.email}`}>{profile.email}</a>
+    </div>
+
+    <dl class="stats">
+      {
+        stats.map((s) => (
+          <div class="stat">
+            <dt class="mono value">{s.value}</dt>
+            <dd class="label">{s.label}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</header>
+
+<style>
+  .hero {
+    padding-top: clamp(1.5rem, 4vw, 2.5rem);
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
+
+  .topline {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    padding-bottom: clamp(1.75rem, 5vw, 3rem);
+  }
+  .topline .name {
+    color: var(--ink);
+  }
+
+  .tagline {
+    font-size: clamp(2.25rem, 6vw, 3.75rem);
+    max-width: 20ch;
+  }
+
+  .summary {
+    margin: clamp(1.25rem, 3vw, 1.75rem) 0 0;
+    max-width: 50ch;
+    color: var(--ink-soft);
+    font-size: clamp(1rem, 0.97rem + 0.2vw, 1.1rem);
+    line-height: 1.6;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 1.75rem;
+    margin-top: clamp(1.5rem, 3.5vw, 2.25rem);
+  }
+
+  .resume {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    color: var(--paper);
+    background: var(--ink);
+    padding: 0.85rem 1.4rem;
+    border: 1px solid var(--ink);
+    transition:
+      background 0.18s ease,
+      color 0.18s ease;
+  }
+  .resume:hover {
+    background: transparent;
+    color: var(--ink);
+  }
+  .resume .arrow {
+    transition: transform 0.18s ease;
+  }
+  .resume:hover .arrow {
+    transform: translateY(2px);
+  }
+
+  .mailto {
+    font-size: 0.82rem;
+    text-decoration: none;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 2px;
+    transition: color 0.15s ease;
+  }
+  .mailto:hover {
+    color: var(--ink);
+  }
+
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(1.75rem, 6vw, 3.5rem);
+    margin: clamp(2rem, 5vw, 3rem) 0 0;
+    padding-top: clamp(1.5rem, 3.5vw, 2.25rem);
+    border-top: 1px solid var(--line);
+  }
+  .stat {
+    margin: 0;
+  }
+  .value {
+    font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem);
+    color: var(--ink);
+    line-height: 1;
+  }
+  .label {
+    margin: 0.55rem 0 0;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    max-width: 14ch;
+  }
+
+  @media (max-width: 480px) {
+    .topline {
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+  }
+</style>

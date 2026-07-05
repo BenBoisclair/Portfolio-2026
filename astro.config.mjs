@@ -2,4 +2,7 @@
 import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
-export default defineConfig({});
+export default defineConfig({
+  // Update this to the real domain on deploy - used for canonical + OG URLs.
+  site: "https://benedictboisclair.com",
+});

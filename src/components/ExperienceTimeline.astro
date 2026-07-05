@@ -1,0 +1,194 @@
+---
+import { experience, education } from "../data/portfolio";
+---
+
+<section class="section" id="experience">
+  <div class="wrap">
+    <p class="eyebrow">Earlier experience</p>
+
+    <ol class="timeline">
+      {
+        experience.map((item) => (
+          <li class="row">
+            <div class="lead">
+              {item.logo && (
+                <img
+                  class="tl-logo"
+                  src={item.logo}
+                  alt=""
+                  width="60"
+                  height="60"
+                  loading="lazy"
+                />
+              )}
+              <span class="period mono">{item.period}</span>
+            </div>
+            <div class="detail">
+              <h3 class="role">
+                {item.role}{" "}
+                <span class="at">
+                  at{" "}
+                  {item.url ? (
+                    <a
+                      class="company-link"
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {item.company}
+                    </a>
+                  ) : (
+                    item.company
+                  )}
+                </span>
+              </h3>
+              <p class="note">{item.note}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="education">
+      <div class="lead">
+        {
+          education.logos && (
+            <div class="tl-logos">
+              {education.logos.map((src) => (
+                <img
+                  class="tl-logo"
+                  src={src}
+                  alt=""
+                  width="60"
+                  height="60"
+                  loading="lazy"
+                />
+              ))}
+            </div>
+          )
+        }
+        <span class="period mono">{education.period}</span>
+      </div>
+      <div class="detail">
+        <h3 class="role">
+          {education.degree}{" "}
+          <span class="at">
+            at{" "}
+            {education.url ? (
+              <a
+                class="company-link"
+                href={education.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {education.school}
+              </a>
+            ) : (
+              education.school
+            )}
+          </span>
+          <span class="gpa mono">{education.gpa}</span>
+        </h3>
+        <p class="note">{education.note}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .section {
+    padding-bottom: var(--section-gap);
+  }
+
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .row,
+  .education {
+    display: grid;
+    grid-template-columns: 8rem minmax(0, 1fr);
+    gap: clamp(1rem, 4vw, 3rem);
+    padding: 1.75rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .education {
+    border-top: 1px solid var(--line);
+    margin-top: 2.5rem;
+  }
+
+  .lead {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+  }
+  .tl-logos {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .tl-logo {
+    display: block;
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 3px;
+  }
+
+  .period {
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+  }
+
+  .role {
+    font-family: var(--sans);
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.4;
+  }
+  .at {
+    font-weight: 400;
+    color: var(--ink-soft);
+  }
+  .company-link {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1px;
+    transition: opacity 0.15s ease;
+  }
+  .company-link:hover {
+    opacity: 0.6;
+  }
+  .gpa {
+    display: inline-block;
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+    margin-left: 0.5rem;
+    font-weight: 400;
+  }
+  .note {
+    margin: 0.55rem 0 0;
+    color: var(--ink-soft);
+    max-width: 56ch;
+  }
+
+  @media (max-width: 560px) {
+    .row,
+    .education {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+    .lead {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.75rem;
+    }
+  }
+</style>

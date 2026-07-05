@@ -1,0 +1,312 @@
+---
+import type { Project } from "../data/portfolio";
+import { techIcon } from "../data/techIcons";
+import ScreenFilmstrip from "./ScreenFilmstrip.astro";
+import PhotoGallery from "./PhotoGallery.astro";
+
+interface Props {
+  project: Project;
+}
+const { project } = Astro.props;
+
+const stack = project.stack.map((label) => ({ label, icon: techIcon(label) }));
+---
+
+<article class="project">
+  <div class="row">
+    <div class="meta">
+      {
+        project.logos && (
+          <div class="logos">
+            {project.logos.map((src) => (
+              <img
+                class="logo"
+                src={src}
+                alt=""
+                width="72"
+                height="72"
+                loading="lazy"
+              />
+            ))}
+          </div>
+        )
+      }
+      <p class="period mono">{project.period}</p>
+      <h3 class="display name">
+        {
+          project.link ? (
+            <a
+              class="name-link"
+              href={project.link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {project.name}
+            </a>
+          ) : (
+            project.name
+          )
+        }
+      </h3>
+      <p class="role mono">
+        {project.role}
+        {
+          project.employer && (
+            <>
+              {" · "}
+              <a
+                class="role-link"
+                href={project.employer.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {project.employer.name}
+              </a>
+            </>
+          )
+        }
+      </p>
+    </div>
+
+    <div class="body">
+      <ul class="bullets">
+        {project.bullets.map((b) => <li>{b}</li>)}
+      </ul>
+
+      <ul class="stack" aria-label="Tech stack">
+        {
+          stack.map(({ label, icon }) => (
+            <li class="mono">
+              {icon && (
+                <svg class="ti" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d={icon.path} />
+                </svg>
+              )}
+              {label}
+            </li>
+          ))
+        }
+      </ul>
+
+      {
+        (project.link || project.links) && (
+          <div class="links-row">
+            {project.link && (
+              <a
+                class="link visit"
+                href={project.link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {project.link.label} <span aria-hidden="true">↗</span>
+              </a>
+            )}
+            {project.links?.map((l) => (
+              <a
+                class="link visit"
+                href={l.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {l.label} <span aria-hidden="true">↗</span>
+              </a>
+            ))}
+          </div>
+        )
+      }
+
+      {
+        project.press && (
+          <div class="press">
+            <span class="press-label mono">In the press</span>
+            <div class="press-list">
+              {project.press.map((p) => (
+                <a
+                  class="link"
+                  href={p.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  “{p.title}” · {p.source} <span aria-hidden="true">↗</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </div>
+
+  {project.screens && <ScreenFilmstrip screens={project.screens} />}
+  {
+    project.photos && (
+      <PhotoGallery photos={project.photos} label="In the field" />
+    )
+  }
+</article>
+
+<style>
+  .project {
+    padding: clamp(2.25rem, 5vw, 3rem) 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
+    gap: clamp(1.5rem, 5vw, 3.5rem);
+  }
+
+  .meta {
+    position: sticky;
+    top: 2rem;
+    align-self: start;
+  }
+  .logos {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0 0 1rem;
+  }
+  .logo {
+    display: block;
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 4px;
+  }
+  .period {
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    margin: 0 0 0.5rem;
+  }
+  .name {
+    font-size: clamp(1.9rem, 1.4rem + 2vw, 2.75rem);
+    line-height: 1;
+    margin: 0;
+  }
+  .role {
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0.7rem 0 0;
+  }
+
+  .body {
+    padding-top: 0.35rem;
+  }
+
+  .bullets {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .bullets li {
+    position: relative;
+    padding-left: 1.4rem;
+    margin-bottom: 0.85rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .bullets li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--ink-faint);
+    font-size: 0.8em;
+  }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0;
+  }
+  .stack li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    padding: 0.3rem 0.75rem;
+    background: var(--paper-sunk);
+  }
+  .ti {
+    width: 0.9em;
+    height: 0.9em;
+    fill: currentColor;
+    opacity: 0.75;
+    flex: none;
+  }
+
+  /* Employer link in the role line — underlined, inherits mono style */
+  .role-link {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1px;
+    transition: opacity 0.15s ease;
+  }
+  .role-link:hover {
+    opacity: 0.6;
+  }
+
+  /* Project name as a subtle link — same look, no underline */
+  .name-link {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+  }
+  .name-link:hover {
+    opacity: 0.6;
+  }
+
+  .links-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .visit {
+    display: inline-block;
+  }
+
+  .press {
+    margin: 1.25rem 0 0;
+  }
+  .press-label {
+    display: block;
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.7rem;
+  }
+  .press-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+  .press .link {
+    font-size: 0.78rem;
+  }
+
+  @media (max-width: 640px) {
+    .row {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    .meta {
+      position: static;
+    }
+  }
+</style>

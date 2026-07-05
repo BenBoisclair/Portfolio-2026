@@ -1,17 +1,23 @@
 ---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/Hero.astro";
+import FeaturedWork from "../components/FeaturedWork.astro";
+import ExperienceTimeline from "../components/ExperienceTimeline.astro";
+import Skills from "../components/Skills.astro";
+import Contact from "../components/Contact.astro";
+import { profile } from "../data/portfolio";
 
+const title = `${profile.name} | ${profile.role}`;
+const description =
+  "Backend-focused full-stack engineer in Bangkok who takes products from idea to production in under two months. EventLink, TasteMap, Rubie Wallet.";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title={title} description={description}>
+  <Hero />
+  <main>
+    <FeaturedWork />
+    <ExperienceTimeline />
+    <Skills />
+  </main>
+  <Contact />
+</BaseLayout>
