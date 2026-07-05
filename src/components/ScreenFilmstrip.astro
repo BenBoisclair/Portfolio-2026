@@ -7,6 +7,13 @@ interface Props {
 }
 const { screens, label } = Astro.props;
 
+// Two layouts, picked automatically from the screens' shape:
+//  · mobile  — tall phone screenshots, sliced into fixed BOX_W×BOX_H panels
+//  · desktop — wide/near-square app screens, each shown whole at a shared height
+// A screen counts as "tall" (phone) at aspect h/w >= 1.4; if none are tall the
+// whole strip switches to the desktop layout.
+const isDesktop = screens.every((s) => s.h / s.w < 1.4);
+
 // Uniform panel box. Every panel renders exactly BOX_W x BOX_H, so tall screens
 // become several consecutive panels and the whole strip shares one height.
 const BOX_W = 264;
@@ -21,13 +28,12 @@ const groups = screens.map((s) => {
   );
   return { ...s, panels, offsets };
 });
-
-const totalPanels = groups.reduce((n, g) => n + g.panels, 0);
 ---
 
 <section
-  class="filmstrip-wrap"
+  class:list={["filmstrip-wrap", { "is-desktop": isDesktop }]}
   style={`--box-w:${BOX_W}px; --box-h:${BOX_H}px;`}
+  data-screen-strip={isDesktop ? "" : undefined}
 >
   <div class="head">
     <span class="mono lbl">{label ?? "Product walkthrough"}</span>
@@ -41,28 +47,82 @@ const totalPanels = groups.reduce((n, g) => n + g.panels, 0);
     aria-label={label ?? "Product screenshots"}
   >
     {
-      groups.map((g) => (
-        <figure class="group">
-          <div class="panels">
-            {g.offsets.map((offset, i) => (
-              <div class="panel" style={`--offset:${offset}px`}>
-                <img
-                  src={g.src}
-                  alt={i === 0 ? g.alt : ""}
-                  aria-hidden={i === 0 ? undefined : "true"}
-                  width={g.w}
-                  height={g.h}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-            ))}
-          </div>
-          <figcaption class="cap mono">{g.caption}</figcaption>
-        </figure>
-      ))
+      groups.map((g) =>
+        isDesktop ? (
+          <figure class="group">
+            <button
+              class="panels frame"
+              style={`--ar:${g.w} / ${g.h}`}
+              data-full={g.src}
+              data-caption={g.caption}
+              aria-label={`Expand screen: ${g.caption}`}
+            >
+              <img
+                src={g.src}
+                alt={g.alt}
+                width={g.w}
+                height={g.h}
+                loading="lazy"
+                decoding="async"
+              />
+            </button>
+            <figcaption class="cap mono">{g.caption}</figcaption>
+          </figure>
+        ) : (
+          <figure class="group">
+            <div class="panels">
+              {g.offsets.map((offset, i) => (
+                <div class="panel" style={`--offset:${offset}px`}>
+                  <img
+                    src={g.src}
+                    alt={i === 0 ? g.alt : ""}
+                    aria-hidden={i === 0 ? undefined : "true"}
+                    width={g.w}
+                    height={g.h}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              ))}
+            </div>
+            <figcaption class="cap mono">{g.caption}</figcaption>
+          </figure>
+        ),
+      )
     }
   </div>
+
+  {
+    isDesktop && (
+      <div
+        class="lightbox"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Screenshot viewer"
+        hidden
+      >
+        <button class="lb-btn lb-close" aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+        <button class="lb-btn lb-prev" aria-label="Previous screen">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M15 5l-7 7 7 7" />
+          </svg>
+        </button>
+        <figure class="lb-stage">
+          <img class="lb-img" src="" alt="" />
+          <figcaption class="lb-caption mono" />
+        </figure>
+        <button class="lb-btn lb-next" aria-label="Next screen">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    )
+  }
 </section>
 
 <style>
@@ -160,6 +220,113 @@ const totalPanels = groups.reduce((n, g) => n + g.panels, 0);
     transform: translateY(calc(-1 * var(--offset)));
   }
 
+  /* Desktop layout — each screen shown whole at a shared height, natural width. */
+  .is-desktop .frame {
+    height: var(--frame-h, 340px);
+    width: auto;
+    aspect-ratio: var(--ar);
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    transition:
+      transform 0.18s ease,
+      box-shadow 0.18s ease;
+  }
+  .is-desktop .frame:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(26, 26, 26, 0.16);
+  }
+  .is-desktop .frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* ---- Lightbox (desktop screens) ---- */
+  .lightbox[hidden] {
+    display: none;
+  }
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.25rem, 2vw, 1.5rem);
+    padding: clamp(1rem, 4vw, 3rem);
+    background: rgba(18, 17, 16, 0.94);
+  }
+  .lb-stage {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    max-width: min(1400px, 94vw);
+  }
+  .lb-img {
+    max-width: 100%;
+    max-height: 82vh;
+    object-fit: contain;
+    border-radius: 6px;
+    background: #fff;
+  }
+  .lb-caption {
+    color: #e8e6e2;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-align: center;
+    margin: 0;
+    min-height: 1em;
+  }
+  .lb-btn {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #f2f0ec;
+    border-radius: 100px;
+    cursor: pointer;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease;
+  }
+  .lb-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  .lb-btn svg {
+    width: 1.4rem;
+    height: 1.4rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .lb-prev,
+  .lb-next {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+  .lb-close {
+    position: absolute;
+    top: clamp(0.75rem, 3vw, 1.5rem);
+    right: clamp(0.75rem, 3vw, 1.5rem);
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+  .lb-close svg {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
   .cap {
     margin-top: 0.7rem;
     font-size: 0.7rem;
@@ -184,5 +351,106 @@ const totalPanels = groups.reduce((n, g) => n + g.panels, 0);
     .filmstrip {
       padding-inline: var(--gutter);
     }
+    .is-desktop .frame {
+      --frame-h: 240px;
+    }
+    .lb-prev,
+    .lb-next {
+      width: 2.25rem;
+      height: 2.25rem;
+    }
   }
 </style>
+
+<script>
+  // Lightbox for the desktop (wide-screen) filmstrip. Each frame is a button
+  // carrying data-full / data-caption; clicking opens the shared overlay.
+  function setupScreenLightbox(root: Element) {
+    const frames = Array.from(root.querySelectorAll<HTMLButtonElement>(".frame"));
+    const lb = root.querySelector<HTMLElement>(".lightbox");
+    if (!lb || frames.length === 0) return;
+    // Move the overlay to <body> so no transformed ancestor (e.g. the
+    // scroll-reveal cards) traps its position:fixed inside the card.
+    document.body.appendChild(lb);
+    const img = lb.querySelector<HTMLImageElement>(".lb-img")!;
+    const cap = lb.querySelector<HTMLElement>(".lb-caption")!;
+    const closeBtn = lb.querySelector<HTMLButtonElement>(".lb-close")!;
+    let idx = -1;
+    let lastFocus: HTMLElement | null = null;
+
+    function show(i: number) {
+      idx = (i + frames.length) % frames.length;
+      const f = frames[idx];
+      img.src = f.dataset.full || "";
+      const inner = f.querySelector("img");
+      img.alt = inner ? inner.alt : "";
+      cap.textContent = f.dataset.caption || "";
+    }
+    function open(i: number) {
+      lastFocus = document.activeElement as HTMLElement;
+      show(i);
+      lb!.hidden = false;
+      document.body.style.overflow = "hidden";
+      closeBtn.focus();
+    }
+    function close() {
+      lb!.hidden = true;
+      img.src = "";
+      document.body.style.overflow = "";
+      if (lastFocus) lastFocus.focus();
+    }
+
+    frames.forEach((f, i) => f.addEventListener("click", () => open(i)));
+    closeBtn.addEventListener("click", close);
+    lb.querySelector(".lb-prev")!.addEventListener("click", () => show(idx - 1));
+    lb.querySelector(".lb-next")!.addEventListener("click", () => show(idx + 1));
+    lb.addEventListener("click", (e) => {
+      const el = e.target as HTMLElement;
+      if (el === lb || el.classList.contains("lb-stage")) close();
+    });
+    const focusables = Array.from(
+      lb.querySelectorAll<HTMLButtonElement>("button"),
+    );
+    document.addEventListener("keydown", (e) => {
+      if (lb!.hidden) return;
+      if (e.key === "Escape") close();
+      else if (e.key === "ArrowLeft") show(idx - 1);
+      else if (e.key === "ArrowRight") show(idx + 1);
+      else if (e.key === "Tab" && focusables.length) {
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        const active = document.activeElement;
+        if (e.shiftKey && active === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && active === last) {
+          e.preventDefault();
+          first.focus();
+        } else if (!focusables.includes(active as HTMLButtonElement)) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+
+    // Touch-swipe navigation on mobile.
+    let touchX: number | null = null;
+    lb.addEventListener(
+      "touchstart",
+      (e) => {
+        touchX = e.changedTouches[0].clientX;
+      },
+      { passive: true },
+    );
+    lb.addEventListener("touchend", (e) => {
+      if (touchX === null) return;
+      const dx = e.changedTouches[0].clientX - touchX;
+      if (Math.abs(dx) > 45) show(dx < 0 ? idx + 1 : idx - 1);
+      touchX = null;
+    });
+  }
+
+  document
+    .querySelectorAll("[data-screen-strip]")
+    .forEach(setupScreenLightbox);
+</script>

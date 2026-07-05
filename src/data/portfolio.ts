@@ -191,6 +191,65 @@ const rubieScreens: Screen[] = [
   },
 ];
 
+const eventlinkScreens: Screen[] = [
+  {
+    src: "/media/eventlink/product/01-overview.webp",
+    caption: "Event overview",
+    alt: "EventLink event overview page with a countdown, event summary and specification cards",
+    w: 1600,
+    h: 879,
+  },
+  {
+    src: "/media/eventlink/product/02-teams.webp",
+    caption: "Teams & roles",
+    alt: "EventLink teams page showing leadership roles and team creation",
+    w: 1600,
+    h: 879,
+  },
+  {
+    src: "/media/eventlink/product/03-ai-plan.webp",
+    caption: "AI plan setup",
+    alt: "EventLink AI onboarding modal for building an event plan",
+    w: 1600,
+    h: 879,
+  },
+  {
+    src: "/media/eventlink/product/04-task-board.webp",
+    caption: "Task board",
+    alt: "EventLink task board grouped by team across weekly phases",
+    w: 1600,
+    h: 879,
+  },
+  {
+    src: "/media/eventlink/product/05-task-detail.webp",
+    caption: "Task detail",
+    alt: "EventLink task detail view with a checklist and comments",
+    w: 1600,
+    h: 881,
+  },
+  {
+    src: "/media/eventlink/product/06-assistant.webp",
+    caption: "In-app assistant",
+    alt: "EventLink in-app AI assistant panel",
+    w: 1214,
+    h: 1582,
+  },
+  {
+    src: "/media/eventlink/product/07-assistant-answer.webp",
+    caption: "Assistant · answers",
+    alt: "EventLink AI assistant listing unassigned tasks",
+    w: 1214,
+    h: 1582,
+  },
+  {
+    src: "/media/eventlink/product/08-assistant-create.webp",
+    caption: "Assistant · new task",
+    alt: "EventLink AI assistant proposing a new task to add to the board",
+    w: 1224,
+    h: 1582,
+  },
+];
+
 const eventlinkPhotos: Photo[] = [
   {
     thumb: "/media/eventlink/01-award-check-thumb.webp",
@@ -279,6 +338,7 @@ export const featured: Project[] = [
     ],
     stack: ["Laravel 12", "Vue 3", "Inertia v2", "PostgreSQL", "Redis", "AWS"],
     link: { label: "eventlink.dev", url: "https://www.eventlink.dev" },
+    screens: eventlinkScreens,
     photos: eventlinkPhotos,
     press: [
       {
